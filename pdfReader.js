@@ -9,5 +9,8 @@ export async function readPDFBuffer(buffer) {
   const telefone =
     (text.match(/Telefone:\s*(\(?\d{2}\)?\s?\d{4,5}-?\d{4})/) || [])[1] || "";
 
+  console.log("=== TEXTO COMPLETO EXTRAÍDO DO PDF ===");
+  console.log(text);
+
   return { nascimento, telefone };
 }
