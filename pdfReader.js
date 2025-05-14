@@ -1,13 +1,16 @@
-import pdf from "pdf-parse";
+import { pdf } from "pdf-parse";
 
 export async function readPDFBuffer(buffer) {
   const data = await pdf(buffer);
   const text = data.text;
 
-  const nascimento =
-    (text.match(/DATA NASCIMENTO \s*(\d{2}\/\d{2}\/\d{4})/) || [])[1] || "";
-  const telefone =
-    (text.match(/Telefone:\s*(\(?\d{2}\)?\s?\d{4,5}-?\d{4})/) || [])[1] || "";
+  const nascimentoMatch = text.match(
+    /nascimento\s*[:\-]?\s*(\d{2}\/\d{2}\/\d{4})/i
+  );
+  const nascimento = nascimentoMatch ? nascimentoMatch[1] : "";
+
+  const telefoneMatch = text.match(/\(?\d{2}\)?\s?\d{4,5}-?\d{4}/);
+  const telefone = telefoneMatch ? telefoneMatch[0] : "";
 
   console.log("=== TEXTO COMPLETO EXTRAÍDO DO PDF ===");
   console.log(text);
