@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/validar-apolice", async (req, res) => {
-  const { cpf, nascimento, ultimos4 } = req.body;
+  const { cpf, nascimento, ultimos4 } = req.body.root;
 
   if (!cpf || !nascimento) {
     return res
