@@ -9,8 +9,9 @@ export async function readPDFBuffer(buffer) {
   );
   const nascimento = nascimentoMatch ? nascimentoMatch[1] : "";
 
-  const rgMatch = text.match(/\b\d{1,2}\.?\d{3}\.?\d{3}-?[0-9Xx]\b/);
-  const rg = rgMatch ? rgMatch[0] : "";
+  // Ajustado: Captura o RG antes da data (ex: 378329101/01/2000 => 378329101)
+  const rgMatch = text.match(/RG\s+(\d+)(?=\/)/i);
+  const rg = rgMatch ? rgMatch[1] : "";
 
   console.log("=== TEXTO COMPLETO EXTRAÍDO DO PDF ===");
   console.log(text);

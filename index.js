@@ -51,8 +51,13 @@ app.post("/validar-apolice", async (req, res) => {
       return res.status(401).json({ erro: "Data de nascimento não confere." });
     }
 
-    if (rg && rgPdf !== rgReq) {
-      return res.status(401).json({ erro: "RG inválido." });
+    if (rg) {
+      const rgValido =
+        rgReq.length === 7 ? rgPdf.startsWith(rgReq) : rgPdf === rgReq;
+
+      if (!rgValido) {
+        return res.status(401).json({ erro: "RG inválido." });
+      }
     }
 
     const link = `https://drive.google.com/file/d/${fileId}/view`;
