@@ -35,6 +35,10 @@ app.post("/validar-apolice", async (req, res) => {
     const nascimentoPdf = pdfData.nascimento.replace(/\D/g, "");
     const nascimentoReq = nascimento.replace(/\D/g, "");
     const telefonePdf = pdfData.telefone.replace(/\D/g, "");
+    console.log("Nascimento extraído do PDF:", pdfData.nascimento);
+    console.log("Nascimento enviado:", nascimento);
+    console.log("NascimentoPdf:", nascimentoPdf);
+    console.log("NascimentoReq:", nascimentoReq);
 
     if (nascimentoPdf !== nascimentoReq) {
       return res.status(401).json({ erro: "Data de nascimento não confere." });
