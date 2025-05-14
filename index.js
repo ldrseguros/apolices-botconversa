@@ -44,7 +44,7 @@ app.post("/validar-apolice", async (req, res) => {
       return res.status(401).json({ erro: "Data de nascimento não confere." });
     }
 
-    if (rgFinal && !rgPdf.endsWith(rgFinal)) {
+    if (rg && !rgPdf.endsWith(rg)) {
       return res.status(401).json({ erro: "RG inválido." });
     }
 
