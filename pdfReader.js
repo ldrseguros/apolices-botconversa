@@ -15,5 +15,5 @@ export async function readPDFBuffer(buffer) {
   console.log("=== TEXTO COMPLETO EXTRAÍDO DO PDF ===");
   console.log(text);
 
-  return { nascimento, telefone };
+  return { nascimento, rg };
 }
