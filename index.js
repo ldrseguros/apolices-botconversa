@@ -31,20 +31,27 @@ app.post("/validar-apolice", async (req, res) => {
 
     const pdfData = await readPDFData(fileId);
 
+    const normalizeRG = (valor) =>
+      valor ? valor.toUpperCase().replace(/[^\dX]/gi, "") : "";
+
     const nascimentoPdf = pdfData.nascimento.replace(/\D/g, "");
     const nascimentoReq = nascimento.replace(/\D/g, "");
-    const rgPdf = pdfData.rg.replace(/\D/g, "");
+
+    const rgPdf = normalizeRG(pdfData.rg);
+    const rgReq = normalizeRG(rg);
 
     console.log("Nascimento extraído do PDF:", pdfData.nascimento);
     console.log("Nascimento enviado:", nascimento);
     console.log("RG extraído do PDF:", pdfData.rg);
-    console.log("RG enviado (últimos dígitos):", rg);
+    console.log("RG enviado:", rg);
+    console.log("RG normalizado PDF:", rgPdf);
+    console.log("RG normalizado enviado:", rgReq);
 
     if (nascimentoPdf !== nascimentoReq) {
       return res.status(401).json({ erro: "Data de nascimento não confere." });
     }
 
-    if (rg && !rgPdf.endsWith(rg)) {
+    if (rg && rgPdf !== rgReq) {
       return res.status(401).json({ erro: "RG inválido." });
     }
 
