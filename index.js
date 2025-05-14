@@ -39,6 +39,10 @@ app.post("/validar-apolice", async (req, res) => {
     console.log("Nascimento enviado:", nascimento);
     console.log("NascimentoPdf:", nascimentoPdf);
     console.log("NascimentoReq:", nascimentoReq);
+    console.log("Texto completo do PDF:\n", text);
+    console.log("Telefone extraído do PDF:", pdfData.telefone);
+    console.log("Telefone enviado:", ultimos4);
+    console.log("TelefonePdf:", telefonePdf);
 
     if (nascimentoPdf !== nascimentoReq) {
       return res.status(401).json({ erro: "Data de nascimento não confere." });
