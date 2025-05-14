@@ -1,4 +1,4 @@
-import { pdf } from "pdf-parse";
+import pdf from "pdf-parse";
 
 export async function readPDFBuffer(buffer) {
   const data = await pdf(buffer);
