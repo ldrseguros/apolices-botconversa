@@ -1,39 +1,54 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { getApolicePDF } from "./drive.js";
+import { getApolicePDF, readPDFData } from "./drive.js";
 
-// Carregar as variáveis de ambiente do .env
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL, // Permite o frontend a partir da URL configurada no .env
-  })
-);
+app.use(cors());
+app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send(
-    "Servidor rodando. Acesse /apolice?cpf=12345678900 para obter o link da apólice."
-  );
+  res.send("Servidor rodando. Envie um POST para /validar-apolice.");
 });
 
-app.get("/apolice", async (req, res) => {
-  const cpf_cnpj = req.query.cpf;
-  if (!cpf_cnpj) return res.status(400).send("CPF é obrigatório");
+app.post("/validar-apolice", async (req, res) => {
+  const { cpf, nascimento, ultimos4 } = req.body;
+
+  if (!cpf || !nascimento) {
+    return res
+      .status(400)
+      .json({ erro: "CPF e data de nascimento são obrigatórios." });
+  }
 
   try {
-    const fileId = await getApolicePDF(cpf_cnpj);
-    if (!fileId) return res.status(404).send("Apolice não encontrada");
+    const fileId = await getApolicePDF(cpf);
+    if (!fileId)
+      return res.status(404).json({ erro: "Apólice não encontrada." });
 
-    const pdfLink = `https://drive.google.com/file/d/${fileId}/view`;
-    res.send({ link: pdfLink });
+    const pdfData = await readPDFData(fileId);
+
+    // Valida os dados
+    const nascimentoPdf = pdfData.nascimento.replace(/\D/g, "");
+    const nascimentoReq = nascimento.replace(/\D/g, "");
+    const telefonePdf = pdfData.telefone.replace(/\D/g, "");
+
+    if (nascimentoPdf !== nascimentoReq) {
+      return res.status(401).json({ erro: "Data de nascimento não confere." });
+    }
+
+    if (ultimos4 && !telefonePdf.endsWith(ultimos4)) {
+      return res.status(401).json({ erro: "Telefone inválido." });
+    }
+
+    const link = `https://drive.google.com/file/d/${fileId}/view`;
+    return res.json({ link });
   } catch (err) {
     console.error(err);
-    res.status(500).send("Erro ao buscar apólice");
+    return res.status(500).json({ erro: "Erro no servidor." });
   }
 });
 
