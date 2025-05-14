@@ -9,8 +9,8 @@ export async function readPDFBuffer(buffer) {
   );
   const nascimento = nascimentoMatch ? nascimentoMatch[1] : "";
 
-  const telefoneMatch = text.match(/\(?\d{2}\)?\s?\d{4,5}-?\d{4}/);
-  const telefone = telefoneMatch ? telefoneMatch[0] : "";
+  const rgMatch = text.match(/\b\d{1,2}\.?\d{3}\.?\d{3}-?[0-9Xx]\b/);
+  const rg = rgMatch ? rgMatch[0] : "";
 
   console.log("=== TEXTO COMPLETO EXTRAÍDO DO PDF ===");
   console.log(text);

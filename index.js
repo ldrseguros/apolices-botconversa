@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/validar-apolice", async (req, res) => {
-  const { cpf, nascimento, ultimos4 } = req.body;
+  const { cpf, nascimento, rg } = req.body;
 
   if (!cpf || !nascimento) {
     return res
@@ -31,23 +31,21 @@ app.post("/validar-apolice", async (req, res) => {
 
     const pdfData = await readPDFData(fileId);
 
-    // Valida os dados
     const nascimentoPdf = pdfData.nascimento.replace(/\D/g, "");
     const nascimentoReq = nascimento.replace(/\D/g, "");
-    const telefonePdf = pdfData.telefone.replace(/\D/g, "");
+    const rgPdf = pdfData.rg.replace(/\D/g, "");
+
     console.log("Nascimento extraído do PDF:", pdfData.nascimento);
     console.log("Nascimento enviado:", nascimento);
-    console.log("NascimentoPdf:", nascimentoPdf);
-    console.log("NascimentoReq:", nascimentoReq);
-    console.log("Telefone extraído do PDF:", pdfData.telefone);
-    console.log("Telefone enviado:", ultimos4);
+    console.log("RG extraído do PDF:", pdfData.rg);
+    console.log("RG enviado (últimos dígitos):", rg);
 
     if (nascimentoPdf !== nascimentoReq) {
       return res.status(401).json({ erro: "Data de nascimento não confere." });
     }
 
-    if (ultimos4 && !telefonePdf.endsWith(ultimos4)) {
-      return res.status(401).json({ erro: "Telefone inválido." });
+    if (rgFinal && !rgPdf.endsWith(rgFinal)) {
+      return res.status(401).json({ erro: "RG inválido." });
     }
 
     const link = `https://drive.google.com/file/d/${fileId}/view`;
